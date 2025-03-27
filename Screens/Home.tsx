@@ -1,15 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
-import CreatePost from "./CreatePost";
-
+import { MainStackScreenList } from "../stacks/MainStack";
 export default function Home() {
   //0. Initialized
   // Hook:
-  const navi = useNavigation();
+  const navi = useNavigation<NativeStackNavigationProp<MainStackScreenList>>();
   //A. Logic Process
   const goToPage = () => {
-    Alert.alert("페이지 이동..!");
     navi.navigate("CreatePost");
   };
   //B. Page UI Rendering

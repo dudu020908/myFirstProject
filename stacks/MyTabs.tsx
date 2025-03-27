@@ -1,8 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../Screens/Home";
-import CreatePost from "../Screens/CreatePost";
 import ProFile from "../Screens/ProFile";
-import MainStack from "./MainStack";
 //하단 Tab을 위한 TabNavigator 컴포넌트 생성
 const Tab = createBottomTabNavigator();
 
