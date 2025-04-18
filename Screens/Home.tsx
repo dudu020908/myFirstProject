@@ -1,11 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
-import { MainStackScreenList } from "../stacks/MainStack";
+import { MainStackScreenList, NaviProps } from "../stacks/MainStack";
 export default function Home() {
   //0. Initialized
   // Hook:
-  const navi = useNavigation<NativeStackNavigationProp<MainStackScreenList>>();
+  const navi = useNavigation<NaviProps>();
   //A. Logic Process
   const goToPage = () => {
     navi.navigate("CreatePost");

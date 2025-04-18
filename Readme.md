@@ -7,7 +7,7 @@ Blank(TS)선택
 
 # React-Navi
 
-#
+# npm install @expo/vector-icons --force
 
 ## Expo Server 시작하기
 
