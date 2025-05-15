@@ -16,11 +16,9 @@ import * as MediaLibrary from "expo-media-library";
 import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { NaviProps } from "../stacks/MainStack";
+import HeaderBtn from "../components/HeaderBtn";
 const Container = styled(View)`
   flex: 1;
-`;
-const PageTitle = styled(Text)`
-  font-size: 24px;
 `;
 // My Gallery Photo styled-component
 const PhotoBtn = styled(TouchableOpacity)`
@@ -52,27 +50,12 @@ const InnerCircle = styled(View)`
   justify-content: center;
   align-items: center;
 `;
-const SelectIcon = styled(Image)`
-  width: 100%;
-  height: 100%;
-`;
-
 const AlbumMenuTitle = styled(Text)`
   font-weight: 600;
   font-size: 18px;
   color: black;
   margin: 15px 20px;
 `;
-
-const NextHeaderBtn = styled(TouchableOpacity)`
-  padding: 5px 15px;
-`;
-const NextHeaderTitle = styled(Text)`
-  color: dodgerblue;
-  font-size: 18px;
-  font-weight: 600;
-`;
-
 //한 줄에 띄울 Gallery Photo 사진 수
 const numColumns = 3;
 //state는 'useState' 라는 Hook을 이용해 만듬
@@ -201,11 +184,7 @@ export default () => {
     };
     //네비게이션 훅 사용해 헤더 접근
     navi.setOptions({
-      headerRight: () => (
-        <NextHeaderBtn onPress={goTo}>
-          <NextHeaderTitle>Next</NextHeaderTitle>
-        </NextHeaderBtn>
-      ),
+      headerRight: () => <HeaderBtn title="NEXT" onPress={goTo} />,
     });
   }, [selectedPhotos]); //[]는 의존성배열 비어있다면,컴포넌트 생성될때 딱 한번 함수 실행, 배열 안에 조건있을시 한번 더 실행
   //useEffect는 ui를 그릴때, 코드계산 끝나고 사용
