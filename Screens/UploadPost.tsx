@@ -8,6 +8,14 @@ import { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import HeaderBtn from "../components/HeaderBtn";
 
+const photoStyles = [
+  { top: 10, right: 10, zIndex: 4 },
+  { top: 7, right: 7, zIndex: 3 },
+  { top: 5, right: 5, zIndex: 2 },
+  { top: 3, right: 3, zIndex: 1 },
+  { top: 0, right: 0, zIndex: 0 },
+];
+
 const Container = styled(View)`
   background-color: black;
   flex: 1;
@@ -51,6 +59,7 @@ const LoadingBox = styled(View)`
   justify-content: center;
   background-color: #ff000000;
 `;
+
 // 네비게이션은 네비게이션 화면이동 스택스크린 프롭스는 받아온값 화면에띄울때
 
 //route.params -> useNavigation 에서 전달받은 데이터가 들어있음
@@ -104,16 +113,34 @@ export default ({
       <Title>Upload Post Page</Title>
       <UploadBox>
         <PhotoBox>
-          <Photo source={{ uri: assets[0].uri }} />
-          <PhotoBlack />
-          {assets.length > 1 && (
+          {/*{assets.length > 1 && (
             <AntDesign
               style={{ position: "absolute", right: 0, margin: 6 }}
               name="switcher"
               size={25}
               color={"white"}
             />
+            <Photo source={{ uri: assets[0].uri }} />
+          <Photo
+            style={{ position: "absolute", right: 5, top: 5 }}
+            source={{ uri: assets[1].uri }}
+          />
+          )}*/}
+          {[0, 1, 2, 3, 4].map(
+            (i) =>
+              assets[i] && (
+                <Photo
+                  key={i}
+                  source={{ uri: assets[i].uri }}
+                  style={{
+                    position: i === 0 ? "relative" : "absolute",
+                    ...photoStyles[i],
+                  }}
+                />
+              )
           )}
+
+          <PhotoBlack />
         </PhotoBox>
 
         {/*글 작성 하는 영역 */}

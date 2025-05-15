@@ -11,4 +11,10 @@ Blank(TS)선택
 
 ## Expo Server 시작하기
 
-npx expo start
+## firebase 설치하기
+
+1. firebase 콘솔에서 프로젝스 생성
+2. 웹/앱으로 생성
+3. firebase sdk 추가 : npm install firebase --force
+4. firebase sdk config copy , firebase config.ts 만들어 paste
+   npx expo start
