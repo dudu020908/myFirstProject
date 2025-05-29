@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import { MainStackScreenList, NaviProps } from "../stacks/MainStack";
+import { auth } from "../firebaseConfig";
 export default function Home() {
   //0. Initialized
   // Hook:
@@ -10,6 +11,9 @@ export default function Home() {
   const goToPage = () => {
     navi.navigate("CreatePost");
   };
+  const signOut = async () => {
+    await auth.signOut();
+  };
   //B. Page UI Rendering
   return (
     <View style={styles.container}>
@@ -17,6 +21,8 @@ export default function Home() {
         <Text>InstaDaelim</Text>
         <Button onPress={goToPage} title={"CREATE"}></Button>
       </View>
+      {/* 테스트용 로그아웃버튼 */}
+      <Button title="Log Out" onPress={signOut} />
     </View>
   );
 }

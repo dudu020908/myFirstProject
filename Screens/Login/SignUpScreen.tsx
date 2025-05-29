@@ -1,4 +1,8 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { useState } from "react";
 import {
   View,
@@ -44,34 +48,36 @@ const UserInput = styled(TextInput)`
   padding: 12px;
   border-radius: 5px;
 `;
+const UserName = styled(UserInput)``;
 const UserId = styled(UserInput)``;
 const UserPW = styled(UserInput)``;
-const LoginBtn = styled(TouchableOpacity)`
+const SignupBtn = styled(TouchableOpacity)`
   background-color: dodgerblue;
   padding: 10px;
   border-radius: 5px;
   align-items: center;
 `;
-const LoginBtnTitle = styled(Text)`
+const SignupBtnTitle = styled(Text)`
   color: white;
 `;
-const CreateAccountBox = styled(View)`
+const Footer = styled(View)`
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 `;
-const CreateAccountBtn = styled(TouchableOpacity)``;
 const SubTitle = styled(Text)`
+  text-align: center;
   color: #383838;
   font-size: 12px;
 `;
 export default () => {
+  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const navi = useNavigation<AuthNaviProps>();
+  const navi = useNavigation();
   //Email,PW Input Text 가져와서 State 할당
-  const onChangeText = (text: string, type: "email" | "password") => {
+  const onChangeText = (text: string, type: "email" | "password" | "name") => {
     //내가 입력한 타입에 따라 state에 text 할당
     switch (type) {
       case "email":
@@ -80,17 +86,27 @@ export default () => {
       case "password":
         setPassword(text);
         break;
+      case "name":
+        setName(text);
+        break;
     }
   };
   //로그인 버튼 클릭시 서버와 통신하여 로그인 프로세스
-  const onLogin = async () => {
+  const onSubmit = async () => {
     //로그인 필요 정보 email,password
     setLoading(true);
     //서버 소통 try catch finally, async
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      //유저의 id, password auth 정보를 통해 firebase에 로그인 요청
-      console.log("로그인 성공:", result.user);
+      //유저의 id, password auth 정보를 통해 firebase에 회원가입 요청
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await updateProfile(result.user, {
+        displayName: name,
+      });
+      Alert.alert("회원가입 성공:");
     } catch (error) {
       //firebase 관련 오류인 경우에만
       if (error instanceof FirebaseError) {
@@ -108,8 +124,8 @@ export default () => {
     //error 혹은 로딩
   };
   //회원가입 버튼 클릭시 회원가입 페이지로 이동하는 프로세스
-  const goToCreateAccount = () => {
-    navi.navigate("Signup");
+  const goBack = () => {
+    navi.goBack();
   };
 
   return (
@@ -121,10 +137,18 @@ export default () => {
           source={require("../../assets/resources/instaDaelim_title.png")}
         />
         <WelcomeTitle>
-          🤗 Welcome! 🤗{"\n"}Here is a My Instagram for Daelim. Glad to meet
-          you guys!
+          🤗 환영합니다! 🤗{"\n"} 이곳은 회원가입 페이지 입니다. 당신의 닉네임,
+          이메일 등을 작성하여 회원가입을 완료하세요!
         </WelcomeTitle>
         <InputField>
+          <UserName
+            placeholder="Nickname *"
+            keyboardType="default"
+            value={name}
+            onChangeText={(text) => {
+              onChangeText(text, "name");
+            }}
+          />
           <UserId
             placeholder="Email *"
             keyboardType="email-address"
@@ -144,24 +168,19 @@ export default () => {
             }}
           />
         </InputField>
-        <LoginBtn onPress={loading ? undefined : onLogin}>
-          <LoginBtnTitle>{loading ? "Loading..." : "Log in"}</LoginBtnTitle>
-        </LoginBtn>
-        <CreateAccountBox>
-          <SubTitle>Already have an account?</SubTitle>
-          <CreateAccountBtn onPress={goToCreateAccount}>
-            <SubTitle
-              style={{
-                color: "#1e90ff",
-                fontWeight: "600",
-                fontSize: 12.5,
-                textDecorationLine: "underline",
-              }}
-            >
-              Create Account
-            </SubTitle>
-          </CreateAccountBtn>
-        </CreateAccountBox>
+        <View style={{ gap: 5 }}>
+          <SignupBtn onPress={loading ? undefined : onSubmit}>
+            <SignupBtnTitle>
+              {loading ? "Loading..." : "Create Account"}
+            </SignupBtnTitle>
+          </SignupBtn>
+          <SignupBtn onPress={goBack} style={{ backgroundColor: "#256ba5" }}>
+            <SignupBtnTitle>go Back</SignupBtnTitle>
+          </SignupBtn>
+        </View>
+        <Footer>
+          <SubTitle>CopyRight 2025{"\n"}LeeDoWon all rights reserved</SubTitle>
+        </Footer>
       </AccountBox>
     </ImgContainer>
   );
