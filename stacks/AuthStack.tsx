@@ -5,7 +5,7 @@ import {
   NativeStackNavigatorProps,
 } from "@react-navigation/native-stack";
 import SignUpScreen from "../Screens/Login/SignUpScreen";
-
+//로그인 관련 프로세스
 export type AuthStackScreenList = {
   Login: undefined;
   Signup: undefined;

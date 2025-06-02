@@ -103,10 +103,13 @@ export default () => {
         email,
         password
       );
+      //회원 가입 완료시, 해당계정 닉네임 갱신
       await updateProfile(result.user, {
         displayName: name,
       });
-      Alert.alert("회원가입 성공:");
+      if (result) {
+        Alert.alert("회원가입 성공:");
+      }
     } catch (error) {
       //firebase 관련 오류인 경우에만
       if (error instanceof FirebaseError) {

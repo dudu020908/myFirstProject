@@ -2,12 +2,15 @@ import { View, Text, Image, Alert, ActivityIndicator } from "react-native";
 import styled from "styled-components";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MainStackScreenList } from "../stacks/MainStack";
-import { AntDesign } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
 import { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import HeaderBtn from "../components/HeaderBtn";
-
+import { auth, storage } from "../firebaseConfig";
+import { collection, addDoc, updateDoc } from "firebase/firestore";
+import { firestore as firestoreDB } from "../firebaseConfig";
+import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
+import { assetToBlob } from "../utils";
 const photoStyles = [
   { top: 10, right: 10, zIndex: 4 },
   { top: 7, right: 7, zIndex: 3 },
@@ -80,7 +83,7 @@ export default ({
   const navi = useNavigation();
   //Header Right 만들기 위해 useLayoutEffect랜더링 되기전 1번 실행  useLayoutEffect(() => {}, []);
   // 사진 & 글을 업로드 하기 위한 함수
-  const onUpload = () => {
+  const onUpload = async () => {
     //[방어코드] text 작성 안한 경우엔 작성 하도록 알람을 보냄,
     if (caption.trim() === "") {
       Alert.alert("글을 작성해 주셔야합니다");
@@ -93,11 +96,48 @@ export default ({
     setLoading(true);
     try {
       // server 에 데이터 업로드
-      // - caption 내가 쓴 글
-      // - assets 내가 선택한 사진들
+      // - 업로드 할 데이터 (asset, caption등)
+      const uploadData = {
+        //작성글
+        caption: caption,
+        //작성자
+        userId: auth.currentUser?.uid,
+        //작성날짜
+        createAt: Date.now(),
+        //닉네임
+        nickname: auth.currentUser?.displayName,
+      };
+      // - 업로드할 DB의 경로
+      // (어떤DB, 어떤컬렉션이름)
+      const path = collection(firestoreDB, "posts");
+      // - db 의 해당 경로에 데이터 업로드
+      const doc = await addDoc(path, uploadData);
+      // - firebase Storage에 이미지를 URL형식으로 변환(Convert)하여 업로드
+      // 여러 사진들을 URL형식으로 변환(Convert)하여 업로드 할 배열 생성하기
+      const photoURLs = [];
+      // 여러 사진들을 반복하여 서버에 업로드 하고, 배열에 넣음
+      for (const asset of assets) {
+        // ㄴ 여러 사진들 서버(storage)에 업로드,
+        // - path
+        const path = `posts/${auth.currentUser?.uid}/${doc.id}/${asset}.png`;
+        const locationRef = ref(storage, path);
+        // - blob 형태 추가 변환
+        const blob = await assetToBlob(asset.uri);
+        // - 서버 업로드
+        const result = await uploadBytesResumable(locationRef, blob);
+        // ㄴ 서버에 업로드할 사진들을 URL로 변환
+        const url = await getDownloadURL(result.ref);
+        // ㄴ URL 로 변환된 사진들을 배열에 추가
+        photoURLs.push(url);
+      }
+      // URL로 변환된 사진을 모아둔 배열을 서버에 업로드
+      await updateDoc(doc, { photos: photoURLs });
       // server에 정상적으로 업로드 완료시 로딩을 종료
+      setLoading(false);
     } catch (error) {
       // Exception(예외) 업로드 실패시 Error
+      Alert.alert("Error", `${error}`);
+      setLoading(false);
     }
   };
   useLayoutEffect(() => {

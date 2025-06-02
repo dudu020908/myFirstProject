@@ -18,3 +18,10 @@ Blank(TS)선택
 3. firebase sdk 추가 : npm install firebase --force
 4. firebase sdk config copy , firebase config.ts 만들어 paste
    npx expo start
+
+## firebase RN용으로 변경하기 위한 AsyncStorage 설치
+
+1. npm i @react-native-async-storage/async-storage --force
+2. firebaseConfig에 1번으로 설치된 설정값 추가/수정
+3. tsconfig.ts에 paths:'["@firebase/auth":...]'추가
+   - 2번을 하기위한 올바른 사용 경로를 인식 가능하게 ts 알려주기위함.
